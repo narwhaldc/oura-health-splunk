@@ -16,7 +16,7 @@ sleep, heart rate, activity, wellness, and ring/battery status.
 
 ## Requirements
 
-- Oura Ring Gen 3 or Gen 4 + a developer app at [developer.ouraring.com](https://developer.ouraring.com)
+- Oura Ring Gen 3 or newer + a developer app at [developer.ouraring.com](https://developer.ouraring.com)
 - Splunk Enterprise 10.x or Splunk Cloud, with HTTP Event Collector enabled and an `oura` index
 - Python 3.9+ on the ingest host (`pip install requests`)
 

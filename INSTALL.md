@@ -76,7 +76,7 @@ Every event is tagged with `oura_user_id` (resolved from `/v2/usercollection/per
 
 ### Oura
 
-- Oura Ring Gen 3 or Gen 4
+- Oura Ring Gen 3 or newer
 - Account at [cloud.ouraring.com](https://cloud.ouraring.com)
 - Developer app registered at [developer.ouraring.com](https://developer.ouraring.com)
 
