@@ -140,13 +140,13 @@ wrong scheme fails the pre-flight token check. With `https` and a self-signed ce
 `verify_ssl: false` in the target config.
 
 **Splunk Cloud:** the HEC host is normally **different from your search-head URL**. Splunk
-Cloud receives HEC on a dedicated inputs host over port 443, e.g.:
+Cloud receives HEC on a dedicated inputs host over port 443 (for example, on an AWS-hosted Cloud stack this would be):
 
 ```
 https://http-inputs-<your-stack>.splunkcloud.com:443/services/collector/event
 ```
 
-Use that inputs hostname (not `<your-stack>.splunkcloud.com`). Full details in Splunk's
+Use that inputs hostname (not `<your-stack>.splunkcloud.com`). Full details and examples for different Cloud hosting providers in Splunk's
 [Set up and use HTTP Event Collector in Splunk Web](https://help.splunk.com/en/splunk-enterprise/get-started/get-data-in/10.4/get-data-with-http-event-collector/set-up-and-use-http-event-collector-in-splunk-web).
 
 ---
