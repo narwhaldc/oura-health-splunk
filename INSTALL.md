@@ -123,11 +123,31 @@ Settings → Indexes → New Index
 
 ### Note the HEC URL(s)
 
+A target's `hec_url` has the form `<scheme>://<host>:<port>/services/collector/event`:
+
 ```
-http://splunk-hostname:8088/services/collector/event
+# HTTP  — HEC "Enable SSL" is OFF
+http://your-splunk-host:8088/services/collector/event
+
+# HTTPS — HEC "Enable SSL" is ON
+https://your-splunk-host:8088/services/collector/event
 ```
 
-HEC endpoints may be `http` or `https`. If using `https` with a self-signed certificate, set `verify_ssl: false` in the target config.
+**A HEC endpoint is HTTP _or_ HTTPS — not both.** SSL is a single global HEC setting
+(Settings → Data Inputs → HTTP Event Collector → Global Settings → **Enable SSL**), so the
+scheme in your `hec_url` must match it: SSL on → `https://`, SSL off → `http://`. Using the
+wrong scheme fails the pre-flight token check. With `https` and a self-signed cert, set
+`verify_ssl: false` in the target config.
+
+**Splunk Cloud:** the HEC host is normally **different from your search-head URL**. Splunk
+Cloud receives HEC on a dedicated inputs host over port 443, e.g.:
+
+```
+https://http-inputs-<your-stack>.splunkcloud.com:443/services/collector/event
+```
+
+Use that inputs hostname (not `<your-stack>.splunkcloud.com`). Full details in Splunk's
+[Set up and use HTTP Event Collector in Splunk Web](https://help.splunk.com/en/splunk-enterprise/get-started/get-data-in/10.4/get-data-with-http-event-collector/set-up-and-use-http-event-collector-in-splunk-web).
 
 ---
 
@@ -332,7 +352,7 @@ rm -rf $SPLUNK_HOME/etc/users/youruser/oura_health
 
 # Extract the app
 cd $SPLUNK_HOME/etc/apps
-tar -xzf /path/to/oura_health-1_8_2.spl
+tar -xzf /path/to/oura_health-1_8_28.spl
 
 # Start Splunk
 $SPLUNK_HOME/bin/splunk start
@@ -343,6 +363,21 @@ $SPLUNK_HOME/bin/splunk start
 Navigate to: `http://your-splunk-host:8000/en-US/app/oura_health/oura_today`
 
 Or use the app nav: **Today / Sleep / Heart Rate / Activity / Wellness / Ring**
+
+### Companion custom visualizations (required for the hypnogram & charge panels)
+
+Two panels render through separate Dashboard Studio **custom-visualization apps**. Install
+them alongside `oura_health` or those panels show a "visualization not found" error — the
+rest of the dashboards use core Splunk visualizations and work without them:
+
+| App | Provides type | Powers |
+|-----|---------------|--------|
+| [hypnogram_viz](https://github.com/narwhaldc/hypnogram_viz) | `hypnogram_viz.hypnogram` | Sleep → Sleep Stage Timeline; Activity → HR Zone Timeline |
+| [charge_ring_viz](https://github.com/narwhaldc/charge_ring_viz) | `charge_ring_viz.chargestatus` | Ring → Charge Status |
+
+Install each the same way (Apps → Install app from file, using the `.spl` in each repo),
+then bump Splunk's static-asset cache (`http://your-splunk-host:8000/en-US/_bump`) or
+restart, and hard-refresh.
 
 ### App structure
 

@@ -23,9 +23,11 @@ sleep, heart rate, activity, wellness, and ring/battery status.
 ## Companion custom visualizations
 
 The Sleep/Activity **hypnograms** and the Ring **charge-status gauge** render via two
-separate Dashboard Studio custom-viz apps — `hypnogram_viz` and `charge_ring_viz`.
-Install those alongside this app for those panels to display; the rest of the
-dashboards work with core Splunk visualizations.
+separate Dashboard Studio custom-viz apps — install them alongside this app for those
+panels to display (the rest of the dashboards use core Splunk visualizations):
+
+- **[hypnogram_viz](https://github.com/narwhaldc/hypnogram_viz)** → `hypnogram_viz.hypnogram`
+- **[charge_ring_viz](https://github.com/narwhaldc/charge_ring_viz)** → `charge_ring_viz.chargestatus`
 
 ## Install
 
