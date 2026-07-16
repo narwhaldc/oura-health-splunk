@@ -1,7 +1,7 @@
 # Oura Health → Splunk — Installation Guide
 
 Complete setup guide for the Oura Ring data pipeline and Splunk Dashboard Studio app.  
-**Last updated:** July 2026 | **App version:** 1.8.28 | **Script:** `oura_to_hec_with_pii.py`
+**Last updated:** July 2026 | **App version:** 1.8.28 | **Script:** `oura_to_hec_with_phi.py`
 
 ---
 
@@ -32,7 +32,7 @@ Complete setup guide for the Oura Ring data pipeline and Splunk Dashboard Studio
 ```
 Oura Ring → Oura Cloud API (v2)
                 ↓
-        oura_to_hec_with_pii.py     (runs every 10 min via cron)
+        oura_to_hec_with_phi.py     (runs every 10 min via cron)
         OAuth2 + PKCE auth
         Per-type field filtering
         Client-side dedup store      (prevents duplicate HEC sends)
@@ -159,7 +159,7 @@ mkdir -p /opt/oura-splunk
 cd /opt/oura-splunk
 
 # Copy the script
-cp oura_to_hec_with_pii.py /opt/oura-splunk/
+cp oura_to_hec_with_phi.py /opt/oura-splunk/
 
 # Install Python dependency
 pip3 install requests --user
@@ -265,7 +265,7 @@ This step runs **once** on a machine with a browser. If the Linux host has no br
 ```bash
 cd /opt/oura-splunk
 source .env
-python3 oura_to_hec_with_pii.py --auth
+python3 oura_to_hec_with_phi.py --auth
 ```
 
 A browser window opens to Oura's authorization page. Log in and approve access. The script captures the callback on `localhost:8182`, exchanges the code for tokens, and saves them to `oura_tokens.json`.
@@ -275,7 +275,7 @@ A browser window opens to Oura's authorization page. Log in and approve access. 
 ```bash
 # On your Mac/laptop — run auth there first
 source .env
-python3 oura_to_hec_with_pii.py --auth
+python3 oura_to_hec_with_phi.py --auth
 # Tokens saved to ./oura_tokens.json
 
 # Copy tokens to the server
@@ -293,7 +293,7 @@ Tokens refresh automatically on every script run. You should not need to re-auth
 ```bash
 cd /opt/oura-splunk
 source .env
-python3 oura_to_hec_with_pii.py --dry-run
+python3 oura_to_hec_with_phi.py --dry-run
 ```
 
 This validates all HEC targets (connectivity + token), prints HEC payloads to stdout without sending anything, and verifies field filtering. Check that per-target counts are symmetric.
@@ -301,7 +301,7 @@ This validates all HEC targets (connectivity + token), prints HEC payloads to st
 ### Initial data ingest
 
 ```bash
-python3 oura_to_hec_with_pii.py
+python3 oura_to_hec_with_phi.py
 ```
 
 On first run with no checkpoint file, the script fetches `OURA_LOOKBACK_DAYS` (default 30) days of history for all data types. Expect ~1,500 heart rate records plus ~30 records per daily type. The dedup store is populated automatically during this run.
@@ -311,19 +311,19 @@ On first run with no checkpoint file, the script fetches `OURA_LOOKBACK_DAYS` (d
 To pull data further back than 30 days:
 
 ```bash
-python3 oura_to_hec_with_pii.py --backfill 2026-01-01
+python3 oura_to_hec_with_phi.py --backfill 2026-01-01
 ```
 
 This ignores the checkpoint and fetches everything from that date forward. Combine with `--reset-dedup` if you want to force re-sending records that may already be in the dedup store:
 
 ```bash
-python3 oura_to_hec_with_pii.py --backfill 2026-01-01 --reset-dedup
+python3 oura_to_hec_with_phi.py --backfill 2026-01-01 --reset-dedup
 ```
 
 To backfill a single target (e.g. after a demo wipe):
 
 ```bash
-python3 oura_to_hec_with_pii.py --backfill 2026-01-01 --reset-dedup --target demo
+python3 oura_to_hec_with_phi.py --backfill 2026-01-01 --reset-dedup --target demo
 ```
 
 ### Verify data landed in Splunk
@@ -428,7 +428,7 @@ Add the following to your crontab (`crontab -e`):
 SHELL=/bin/bash
 
 # Oura → Splunk sync — every 10 minutes, all targets
-*/10 * * * *  cd /opt/oura-splunk && source .env && python3 ./oura_to_hec_with_pii.py >> /var/log/oura_sync.log 2>&1
+*/10 * * * *  cd /opt/oura-splunk && source .env && python3 ./oura_to_hec_with_phi.py >> /var/log/oura_sync.log 2>&1
 ```
 
 One cron entry, one token file, all targets.
@@ -545,8 +545,8 @@ Some data types have date fields that reflect historical events rather than curr
 | `sleep_detail` | `hrv.items`, `heart_rate.items`, `app_sleep_phase_5_min` | Per-5-min arrays; `sleep_phase_5_min` is kept for the hypnogram |
 | `personal_info` | `email` | Stripped defensively — lands in shared multi-user index |
 
-To disable all filtering: `python3 oura_to_hec_with_pii.py --no-filter`  
-To see current filters: `python3 oura_to_hec_with_pii.py --show-filters`
+To disable all filtering: `python3 oura_to_hec_with_phi.py --no-filter`  
+To see current filters: `python3 oura_to_hec_with_phi.py --show-filters`
 
 ### Splunk fields
 
@@ -686,7 +686,7 @@ rm oura_checkpoint.json
 ### Backfill from a specific date
 
 ```bash
-python3 oura_to_hec_with_pii.py --backfill 2026-06-01
+python3 oura_to_hec_with_phi.py --backfill 2026-06-01
 ```
 
 ---
@@ -697,7 +697,7 @@ python3 oura_to_hec_with_pii.py --backfill 2026-06-01
 
 1. Verify HEC is reachable: `curl -k -H "Authorization: Splunk $SPLUNK_HEC_TOKEN" $SPLUNK_HEC_URL`
 2. Check the log: `tail -50 /var/log/oura_sync.log`
-3. Run dry-run to confirm the script fetches data: `source .env && python3 oura_to_hec_with_pii.py --dry-run`
+3. Run dry-run to confirm the script fetches data: `source .env && python3 oura_to_hec_with_phi.py --dry-run`
 
 ### HEC pre-flight failures
 
@@ -713,7 +713,7 @@ If you see `401 Unauthorized` from the Oura API, the refresh token has likely ex
 
 ```bash
 source .env
-python3 oura_to_hec_with_pii.py --auth
+python3 oura_to_hec_with_phi.py --auth
 ```
 
 ### Dashboard shows N/A or wrong data
@@ -743,10 +743,10 @@ If you deleted events from the index (via `| delete` or index wipe) but the dedu
 
 ```bash
 # Reset all targets
-python3 oura_to_hec_with_pii.py --reset-dedup
+python3 oura_to_hec_with_phi.py --reset-dedup
 
 # Or reset a single target after a wipe
-python3 oura_to_hec_with_pii.py --reset-dedup --target demo
+python3 oura_to_hec_with_phi.py --reset-dedup --target demo
 ```
 
 ### One target down, other still working

@@ -10,25 +10,25 @@ Oura Ring API → Splunk HEC Forwarder
 
 Usage:
     # First run: perform OAuth2 authorization (opens browser)
-    python oura_to_hec_with_pii.py --auth
+    python oura_to_hec_with_phi.py --auth
 
     # Normal incremental sync
-    python oura_to_hec_with_pii.py
+    python oura_to_hec_with_phi.py
 
     # Dry run — print HEC payloads, send nothing
-    python oura_to_hec_with_pii.py --dry-run
+    python oura_to_hec_with_phi.py --dry-run
 
     # Historical backfill from a date
-    python oura_to_hec_with_pii.py --backfill 2024-01-01
+    python oura_to_hec_with_phi.py --backfill 2024-01-01
 
     # Reset dedup store (re-send everything in the fetch window)
-    python oura_to_hec_with_pii.py --reset-dedup
+    python oura_to_hec_with_phi.py --reset-dedup
 
     # Operate on a single target only
-    python oura_to_hec_with_pii.py --target demo --reset-dedup
+    python oura_to_hec_with_phi.py --target demo --reset-dedup
 
     # Show what fields are stripped per type
-    python oura_to_hec_with_pii.py --show-filters
+    python oura_to_hec_with_phi.py --show-filters
 
 Required env vars (single-target mode — no targets config file):
     OURA_CLIENT_ID      - OAuth2 client ID from developer.ouraring.com

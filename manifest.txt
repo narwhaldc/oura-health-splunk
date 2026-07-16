@@ -15,7 +15,7 @@ Files included:
     and static assets. Install via Splunk Web (Apps → Install app from file)
     or extract to $SPLUNK_HOME/etc/apps/.
 
-  oura_to_hec_with_pii.py
+  oura_to_hec_with_phi.py
     Oura Ring API → Splunk HEC ingest script. OAuth2 + PKCE authentication,
     per-type field filtering, checkpoint-based incremental sync, client-side
     dedup store with per-target tracking, multi-target HEC fan-out, HEC
