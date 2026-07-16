@@ -1,0 +1,78 @@
+Oura Health for Splunk — Distribution Manifest
+================================================
+
+Version:  1.8.28
+Build:    20260713e
+Date:     2026-07-14
+Author:   Tony Vincent
+
+Files included:
+
+  oura_health-1_8_28.spl
+    Splunk app package (tar.gz). Contains 6 Dashboard Studio dashboards
+    (Today, Sleep, Heart Rate, Activity, Wellness, Ring), navigation,
+    saved searches (battery model, HR baseline, scheduled dedup maintenance),
+    and static assets. Install via Splunk Web (Apps → Install app from file)
+    or extract to $SPLUNK_HOME/etc/apps/.
+
+  oura_to_hec_with_pii.py
+    Oura Ring API → Splunk HEC ingest script. OAuth2 + PKCE authentication,
+    per-type field filtering, checkpoint-based incremental sync, client-side
+    dedup store with per-target tracking, multi-target HEC fan-out, HEC
+    pre-flight token validation, and fcntl-based lock file to prevent
+    concurrent runs. Requires Python 3.9+ and the requests library.
+
+  INSTALL.md
+    Complete installation and configuration guide covering Oura API setup,
+    Splunk HEC configuration, OAuth2 authorization, environment variables,
+    multi-target configuration, cron automation, log rotation, data reference,
+    dedup store operation, scheduled dedup maintenance, checkpoint management,
+    and troubleshooting.
+
+  manifest.txt
+    This file.
+
+Changelog:
+
+  1.8.4 (2026-07-14)
+    - Today dashboard: fixed ds_score_trend hardcoded at -2d, now uses
+      global time picker
+    - Full audit of all 6 dashboards confirmed no remaining -2d bugs
+      on trend/aggregate panels
+    - Ingest script: added fcntl.flock() exclusive lock to prevent
+      concurrent runs (cron + manual overlap). Auto-releases on exit
+      or crash. --auth/--list-types/--show-filters bypass the lock.
+
+  1.8.3 (2026-07-13)
+    - Activity dashboard: fixed ds_steps_trend, ds_cal_trend, ds_score_trend
+      hardcoded at -2d, now use global time picker
+
+  1.8.2 (2026-07-13)
+    - Scheduled dedup: Pass 1 (2:00 AM) tags dups via streamstats + lookup,
+      Pass 2 (2:15 AM) deletes via lookup match. Verify search on-demand.
+    - Fixed Pass 2: removed map-based guard (| delete incompatible with map)
+
+  1.8.1 (2026-07-13)
+    - Added scheduled dedup saved searches (Pass 1, Pass 2, Verify)
+
+  1.8.0 (2026-07-13)
+    - Added dedup saved searches (manual, disabled by default)
+
+  1.7.9 (2026-07-12)
+    - Activity dashboard: stacked zone chart Z1 at bottom through Z5 at top
+
+  1.7.5–1.7.8 (2026-07-12)
+    - Activity dashboard iterative fixes: stackMode, yAxisTitleText,
+      yAxisTitleVisibility, Z0 exclusion, stacked column chart
+
+  Ingest script changelog (not versioned in app.conf):
+    - fcntl.flock() exclusive lock prevents concurrent runs
+    - Multi-target HEC support via oura_targets.json config file
+    - Per-target tracking in dedup store (sent_to field)
+    - HEC pre-flight token/connectivity validation on every run
+    - --target CLI flag for single-target operations
+    - --reset-dedup --target for selective dedup store reset
+    - verify_ssl ignored for http:// targets
+    - Fixed str | None syntax for Python 3.9 compatibility
+    - Client-side dedup store with SHA-256 content hashing
+    - Fixed incorrect comment claiming HEC deduplicates by content

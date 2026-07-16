@@ -1,0 +1,15 @@
+<nav search_view="search" color="#0F1117">
+  <view name="oura_today" default="true" label="Today"/>
+  <view name="oura_sleep" label="Sleep"/>
+  <view name="oura_heart_rate" label="Heart Rate"/>
+  <view name="oura_activity" label="Activity"/>
+  <view name="oura_wellness" label="Wellness"/>
+  <view name="oura_ring" label="Ring"/>
+  <collection label="Explore">
+    <view name="search" label="Search"/>
+    <view name="reports" label="Reports"/>
+    <view name="alerts" label="Alerts"/>
+    <view name="datasets" label="Datasets"/>
+    <view name="dashboards" label="Dashboards"/>
+  </collection>
+</nav>

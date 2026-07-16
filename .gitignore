@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+
+# OS / editor
+.DS_Store
+*.bak
+
+# Claude
+.claude/
+
+# Runtime secrets & state — NEVER commit
+.env
+oura_tokens.json
+oura_targets.json
+oura_checkpoint.json
+oura_dedup_store.json
+oura_sync.lock
+
+# Old build artifacts — keep only the current package
+oura_health-*.spl
+!oura_health-1_8_28.spl
