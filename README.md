@@ -33,6 +33,24 @@ panels to display (the rest of the dashboards use core Splunk visualizations):
 
 See **[INSTALL.md](INSTALL.md)**.
 
+## Scope & limitations
+
+This release is **single-user by design.** It assumes one Oura account owner who is also
+the only person with access to the Splunk `oura` index — and therefore the only one who
+can see the **personal health information (PHI)** it holds (sleep, heart rate, HRV,
+activity, and `personal_info` fields such as age). Access control today is effectively
+"you own the index, you see the data."
+
+Not yet included:
+
+- **Multi-user access isolation** — no per-user separation of data within a shared index.
+- **Role-based access control (RBAC)** — no roles/capabilities scoping who can read the PHI.
+
+> Multiple *accounts* can already be **ingested** into the same index (see "Multi-user
+> support" in [INSTALL.md](INSTALL.md) — separate OAuth apps/token files, joinable on
+> `oura_user_id`), but that's ingest fan-in, **not** access control. Strict RBAC and true
+> multi-user PHI segregation are planned future work.
+
 ## Notes
 
 Personal project, provided as-is with no warranty. All configuration (credentials,
