@@ -4,14 +4,14 @@
     "title": "Oura Health",
     "id": {
       "name": "oura_health",
-      "version": "1.8.29"
+      "version": "1.8.30"
     },
     "author": [
       {
         "name": "Tony Vincent"
       }
     ],
-    "description": "Oura Ring health and wellness dashboards powered by Splunk Dashboard Studio",
+    "description": "Oura Ring health and wellness dashboards powered by Splunk Dashboard Studio. Source & docs: https://github.com/narwhaldc/oura-health-splunk",
     "classification": {
       "categories": [
         "IoT & Industrial Data",
@@ -21,7 +21,8 @@
     "license": {
       "name": "Apache-2.0",
       "text": "LICENSE"
-    }
+    },
+    "version": null
   },
   "dependencies": {
     "hypnogram_viz": {
