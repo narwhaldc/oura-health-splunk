@@ -19,4 +19,4 @@ oura_sync.lock
 
 # Old build artifacts — keep only the current package
 oura_health-*.spl
-!oura_health-1_8_71.spl
+!oura_health-1_8_72.spl
