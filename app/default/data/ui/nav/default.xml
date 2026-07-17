@@ -5,6 +5,7 @@
   <view name="oura_activity" label="Activity"/>
   <view name="oura_wellness" label="Wellness"/>
   <view name="oura_ring" label="Ring"/>
+  <view name="oura_about" label="About" icon="bookmark"/>
   <collection label="Explore" icon="magnifier">
     <view name="search" label="Search"/>
     <view name="reports" label="Reports"/>
