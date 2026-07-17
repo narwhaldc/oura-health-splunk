@@ -9,8 +9,8 @@ sleep, heart rate, activity, wellness, and ring/battery status.
 | Path | What it is |
 |------|------------|
 | `oura_to_hec_with_phi.py` | Oura API → Splunk HEC ingest script (OAuth2 + PKCE, incremental checkpointed sync, client-side dedup, multi-target fan-out) |
-| `app/` | Unpacked Splunk app source — 6 Dashboard Studio dashboards (Today, Sleep, Heart Rate, Activity, Wellness, Ring), nav, saved searches |
-| `oura_health-1_8_33.spl` | Packaged app, installable via Splunk Web (Apps → Install app from file) |
+| `app/` | Unpacked Splunk app source — 6 Dashboard Studio dashboards (Today, Sleep, Heart Health, Activity, Wellness, Ring), nav, saved searches |
+| `oura_health-1_8_34.spl` | Packaged app, installable via Splunk Web (Apps → Install app from file) |
 | `INSTALL.md` | Full setup guide (Oura API, HEC, cron, backfill, troubleshooting) |
 | `manifest.txt` | Distribution manifest |
 

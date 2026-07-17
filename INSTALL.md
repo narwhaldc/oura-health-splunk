@@ -1,7 +1,7 @@
 # Oura Health → Splunk — Installation Guide
 
 Complete setup guide for the Oura Ring data pipeline and Splunk Dashboard Studio app.  
-**Last updated:** July 2026 | **App version:** 1.8.33 | **Script:** `oura_to_hec_with_phi.py`
+**Last updated:** July 2026 | **App version:** 1.8.34 | **Script:** `oura_to_hec_with_phi.py`
 
 ---
 
@@ -46,7 +46,7 @@ Oura Ring → Oura Cloud API (v2)
         └─────────────────┘   └─────────────────┘
                 ↓                       ↓
         oura_health Splunk app  (6 Dashboard Studio dashboards)
-        Today / Sleep / Heart Rate / Activity / Wellness / Ring
+        Today / Sleep / Heart Health / Activity / Wellness / Ring
 ```
 
 The script runs on a Linux host on your local network. It does **not** require Splunk to be internet-facing — it pushes data to Splunk's HEC port directly. The Oura API is the only external dependency. A single cron entry, a single Oura API fetch, and a single token file serve all targets.
@@ -352,7 +352,7 @@ rm -rf $SPLUNK_HOME/etc/users/youruser/oura_health
 
 # Extract the app
 cd $SPLUNK_HOME/etc/apps
-tar -xzf /path/to/oura_health-1_8_33.spl
+tar -xzf /path/to/oura_health-1_8_34.spl
 
 # Start Splunk
 $SPLUNK_HOME/bin/splunk start
@@ -362,7 +362,7 @@ $SPLUNK_HOME/bin/splunk start
 
 Navigate to: `http://your-splunk-host:8000/en-US/app/oura_health/oura_today`
 
-Or use the app nav: **Today / Sleep / Heart Rate / Activity / Wellness / Ring**
+Or use the app nav: **Today / Sleep / Heart Health / Activity / Wellness / Ring**
 
 ### Companion custom visualizations (required for the hypnogram & charge panels)
 
@@ -401,7 +401,7 @@ oura_health/
         └── views/
             ├── oura_today.xml        # Today dashboard
             ├── oura_sleep.xml        # Sleep dashboard (includes hypnogram)
-            ├── oura_heart_rate.xml   # Heart Rate dashboard
+            ├── oura_heart_rate.xml   # Heart Health dashboard
             ├── oura_activity.xml     # Activity dashboard (incl. stacked zone chart)
             ├── oura_wellness.xml     # Wellness / SpO2 / Temperature dashboard
             └── oura_ring.xml         # Ring battery telemetry + depletion forecast
