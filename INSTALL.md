@@ -1,7 +1,7 @@
 # Oura Health → Splunk — Installation Guide
 
 Complete setup guide for the Oura Ring data pipeline and Splunk Dashboard Studio app.  
-**Last updated:** July 2026 | **App version:** 1.8.82 | **Script:** `oura_to_hec_with_phi.py`
+**Last updated:** July 2026 | **App version:** 1.8.83 | **Script:** `oura_to_hec_with_phi.py`
 
 ---
 
@@ -352,7 +352,7 @@ rm -rf $SPLUNK_HOME/etc/users/youruser/oura_health
 
 # Extract the app
 cd $SPLUNK_HOME/etc/apps
-tar -xzf /path/to/oura_health-1_8_82.spl
+tar -xzf /path/to/oura_health-1_8_83.spl
 
 # Start Splunk
 $SPLUNK_HOME/bin/splunk start
