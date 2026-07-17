@@ -1,14 +1,14 @@
 Oura Health for Splunk — Distribution Manifest
 ================================================
 
-Version:  1.8.73
+Version:  1.8.74
 Build:    20260713e
 Date:     2026-07-14
 Author:   Tony Vincent
 
 Files included:
 
-  oura_health-1_8_73.spl
+  oura_health-1_8_74.spl
     Splunk app package (tar.gz). Contains 6 Dashboard Studio dashboards
     (Today, Sleep, Heart Health, Activity, Wellness, Ring), navigation,
     saved searches (battery model, HR baseline, scheduled dedup maintenance),
