@@ -1,6 +1,6 @@
 <nav search_view="search" color="#0F1117">
-  <view name="oura_today" default="true" label="Today"/>
-  <view name="oura_sleep" label="Sleep"/>
+  <view name="oura_today" default="true" label="Today" icon="chartpanels"/>
+  <view name="oura_sleep" label="Sleep" icon="chartgauge"/>
   <view name="oura_heart_rate" label="Heart Health" icon="pulse"/>
   <view name="oura_activity" label="Activity"/>
   <view name="oura_wellness" label="Wellness"/>
