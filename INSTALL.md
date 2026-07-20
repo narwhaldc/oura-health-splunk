@@ -1,7 +1,9 @@
 # Oura Health → Splunk — Installation Guide
 
 Complete setup guide for the Oura Ring data pipeline and Splunk Dashboard Studio app.  
-**Last updated:** July 2026 | **App version:** 2.0.0 | **Script:** `oura_to_hec_with_phi.py`
+**Last updated:** July 2026 | **App version:** 2.0.1 | **Script:** `oura_to_hec_with_phi.py`
+
+**GA release set:** oura_health **2.0.1** · hypnogram_viz **1.0.1** · charge_ring_viz **1.0.0** (all AppInspect Cloud-clean; install the two viz add-ons before/alongside this app — a full Splunk restart makes their custom-viz JS render).
 
 ---
 
@@ -352,7 +354,7 @@ rm -rf $SPLUNK_HOME/etc/users/youruser/oura_health
 
 # Extract the app
 cd $SPLUNK_HOME/etc/apps
-tar -xzf /path/to/oura_health-2_0_0.spl
+tar -xzf /path/to/oura_health-2_0_1.spl
 
 # Start Splunk
 $SPLUNK_HOME/bin/splunk start
