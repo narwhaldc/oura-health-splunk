@@ -245,13 +245,21 @@ def load_targets(target_filter: Optional[str] = None) -> dict[str, dict]:
             "personal": {
                 "hec_url":    "https://splunk:8088/services/collector/event",
                 "hec_token":  "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-                "index":      "oura",
-                "sourcetype": "oura:ring",
+                "index":      "wearables",
+                "person_id":  "P001",
                 "verify_ssl": false
             },
             "demo": { ... }
         }
     }
+
+    Wearables platform:
+      - Events go to index=wearables with sourcetype=oura:<data_type>
+        (e.g. oura:sleep_detail, oura:sleep, oura:heart_rate, oura:activity).
+      - "person_id" (opaque, canonical person identity) is stamped as an INDEXED
+        HEC field along with vendor="oura" — this is the RBAC key. Set one per
+        target. "sourcetype" in the target config is now ignored for data events
+        (derived from the data type); kept only for backward compatibility.
 
     Returns a dict of {name: config} for active targets.
     """
@@ -271,7 +279,16 @@ def load_targets(target_filter: Optional[str] = None) -> dict[str, dict]:
                     "index":      cfg.get("index", "oura"),
                     "sourcetype": cfg.get("sourcetype", "oura:ring"),
                     "verify_ssl": cfg.get("verify_ssl", True),
+                    # Wearables platform: vendor is constant for this fetcher;
+                    # person_id is the canonical (opaque) person identity stamped
+                    # as an INDEXED HEC field for RBAC. Resolve it per target —
+                    # this fetcher already knows which account it is pulling.
+                    "vendor":     cfg.get("vendor", "oura"),
+                    "person_id":  cfg.get("person_id"),
                 }
+                if not targets[name]["person_id"]:
+                    log.warning("Target '%s' has no person_id — events carry vendor but no indexed "
+                                "person_id (required for wearables RBAC). Add \"person_id\" to the target.", name)
             log.info("Loaded %d target(s) from %s: %s",
                      len(targets), TARGETS_FILE, list(targets.keys()))
         except Exception as e:
@@ -288,6 +305,8 @@ def load_targets(target_filter: Optional[str] = None) -> dict[str, dict]:
                 "index":      SPLUNK_INDEX,
                 "sourcetype": SPLUNK_SOURCETYPE,
                 "verify_ssl": SPLUNK_VERIFY_SSL,
+                "vendor":     os.getenv("WEARABLE_VENDOR", "oura"),
+                "person_id":  os.getenv("WEARABLE_PERSON_ID"),
             }
             log.info("Using single target from env vars (no %s found)", TARGETS_FILE)
 
@@ -824,11 +843,12 @@ def send_personal_info_snapshot(
     if dry_run:
         for tname, tcfg in targets.items():
             hec_event = {
-                "sourcetype": tcfg["sourcetype"],
+                "sourcetype": "oura:personal_info",
                 "index":      tcfg["index"],
                 "source":     "oura:ring:personal_info",
                 "event":      record,
                 "time":       time.time(),
+                "fields":     wearable_fields(tcfg),
             }
             print(f"# target: {tname}")
             print(json.dumps(hec_event, indent=2, default=str))
@@ -856,6 +876,17 @@ def send_personal_info_snapshot(
     return checkpoint
 
 
+def wearable_fields(target: dict) -> dict:
+    """Indexed fields stamped at INGEST. HEC promotes keys in the event's
+    'fields' object to indexed fields (no props/transforms needed). Identity
+    lives here so authorize.conf srchFilter + tstats can rely on it. Keep this
+    set minimal (vendor + person_id) — indexed fields cost index size."""
+    f = {"vendor": target.get("vendor", "oura")}
+    if target.get("person_id"):
+        f["person_id"] = target["person_id"]
+    return f
+
+
 def record_to_hec_event(record: dict, data_type: str, target: dict) -> dict:
     _, date_field, _ = ENDPOINTS[data_type]
     event_time = None
@@ -874,11 +905,12 @@ def record_to_hec_event(record: dict, data_type: str, target: dict) -> dict:
                 pass
 
     hec_event: dict = {
-        "sourcetype": target["sourcetype"],
+        "sourcetype": f"oura:{data_type}",
         "index":      target["index"],
         "source":     f"oura:ring:{data_type}",
         "event":      record,
         "time":       event_time if event_time else time.time(),
+        "fields":     wearable_fields(target),
     }
     return hec_event
 
