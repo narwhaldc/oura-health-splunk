@@ -907,11 +907,12 @@ def send_personal_info_snapshot(
     all_ok = True
     for tname, tcfg in targets.items():
         hec_event = {
-            "sourcetype": tcfg["sourcetype"],
+            "sourcetype": "oura:personal_info",
             "index":      tcfg["index"],
             "source":     "oura:ring:personal_info",
             "event":      record,
             "time":       time.time(),
+            "fields":     wearable_fields(tcfg),
         }
         if not send_to_splunk(splunk_session, tcfg, hec_event, target_name=tname):
             log.warning("  personal_info: send failed for target '%s' — will retry next run", tname)
