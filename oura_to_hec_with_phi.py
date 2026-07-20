@@ -27,6 +27,9 @@ Usage:
     # Operate on a single target only
     python oura_to_hec_with_phi.py --target demo --reset-dedup
 
+    # Per-target dedup coverage (which targets have/haven't seen each data type)
+    python oura_to_hec_with_phi.py --status
+
     # Show what fields are stripped per type
     python oura_to_hec_with_phi.py --show-filters
 
@@ -613,6 +616,51 @@ def prune_dedup_store(store: dict, max_age_days: int = None) -> dict:
     return store
 
 
+def print_dedup_status() -> None:
+    """
+    Per-target coverage report from the dedup store. Each dedup entry records a
+    `sent_to` list of the targets that have received that record, so this shows
+    which targets have (and have NOT) seen each data type — handy during a
+    multi-target transition. Read-only; touches no state.
+    """
+    import collections
+    store = load_dedup_store()  # returns {} if the file is missing
+    known = []
+    if TARGETS_FILE.exists():
+        try:
+            known = list(json.loads(TARGETS_FILE.read_text()).get("targets", {}).keys())
+        except Exception:
+            pass
+    if not store:
+        print(f"Dedup store empty or missing ({DEDUP_FILE}) — nothing sent yet, or it was reset.")
+        if known:
+            print("Known targets: " + ", ".join(known))
+        return
+    seen = set()
+    per_t = collections.Counter()
+    mat = collections.defaultdict(collections.Counter)   # target -> data_type -> count
+    dt_tot = collections.Counter()
+    for k, e in store.items():
+        dt = k.split("::", 1)[0]
+        dt_tot[dt] += 1
+        for t in e.get("sent_to", []):
+            seen.add(t)
+            per_t[t] += 1
+            mat[t][dt] += 1
+    allt = sorted(set(known) | seen)
+    total = len(store)
+    print(f"Dedup store: {total} records | targets: {', '.join(allt) if allt else '(none)'}\n")
+    print(f"{'data_type':20}{'ALL':>7}" + "".join(f"{t[:15]:>17}" for t in allt))
+    for dt in sorted(dt_tot):
+        print(f"{dt:20}{dt_tot[dt]:>7}" + "".join(f"{mat[t][dt]:>17}" for t in allt))
+    print(f"{'TOTAL':20}{total:>7}" + "".join(f"{per_t[t]:>17}" for t in allt))
+    print("\nMissing (records not yet sent) per target:")
+    for t in allt:
+        miss = total - per_t[t]
+        note = "  <-- new/never received" if per_t[t] == 0 else ("  (fully covered)" if miss == 0 else "")
+        print(f"  {t:20}: {miss:>6} missing{note}")
+
+
 def compute_record_key(record: dict, data_type: str) -> str:
     """
     Compute a stable identity key for a record.
@@ -1174,6 +1222,11 @@ def main():
         help="Operate on a single target only (e.g. --target demo). "
              "Useful with --reset-dedup or --backfill to affect one instance.",
     )
+    parser.add_argument(
+        "--status", action="store_true",
+        help="Print per-target dedup coverage (which targets have/haven't received "
+             "each data type) from the dedup store and exit.",
+    )
     args = parser.parse_args()
 
     # -- Informational exits --------------------------------------------------
@@ -1181,6 +1234,10 @@ def main():
         print("Available data types:")
         for name, (path, date_field, is_series) in ENDPOINTS.items():
             print(f"  {name:<12} endpoint=/{path:<16} date_field={date_field}")
+        sys.exit(0)
+
+    if args.status:
+        print_dedup_status()
         sys.exit(0)
 
     if args.show_filters:
