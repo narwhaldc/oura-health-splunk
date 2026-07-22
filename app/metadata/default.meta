@@ -9,3 +9,6 @@ export = system
 [nav]
 access = read : [ * ], write : [ admin, sc_admin ]
 export = system
+
+[macros]
+export = system
