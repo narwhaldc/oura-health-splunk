@@ -16,7 +16,7 @@ Current general-availability set (all three pass Splunk Cloud AppInspect):
 
 | App | Version | Repo |
 |-----|---------|------|
-| **oura_health** (this app) | 2.0.4 | [oura-health-splunk](https://github.com/narwhaldc/oura-health-splunk) |
+| **oura_health** (this app) | 2.0.8 | [oura-health-splunk](https://github.com/narwhaldc/oura-health-splunk) |
 | **hypnogram_viz** | 1.0.1 | [hypnogram_viz](https://github.com/narwhaldc/hypnogram_viz) |
 | **charge_ring_viz** | 1.0.0 | [charge_ring_viz](https://github.com/narwhaldc/charge_ring_viz) |
 
@@ -28,7 +28,7 @@ Install the two viz add-ons before/alongside this app; a full Splunk restart mak
 |------|------------|
 | _(ingest script)_ | **Moved to [TA-oura](https://github.com/narwhaldc/TA-oura)** → `tools/oura_to_hec_with_phi.py` (Oura API → HEC; OAuth2, checkpointed sync, dedup, multi-target fan-out) |
 | `app/` | Unpacked Splunk app source — 6 Dashboard Studio dashboards (Today, Sleep, Heart Health, Activity, Wellness, Ring) plus an About/setup page, nav, saved searches |
-| `oura_health-2_0_4.spl` | Packaged app, installable via Splunk Web (Apps → Install app from file) |
+| `oura_health-2_0_8.spl` | Packaged app, installable via Splunk Web (Apps → Install app from file) |
 | `INSTALL.md` | Full setup guide (Oura API, HEC, cron, backfill, troubleshooting) |
 | `manifest.txt` | Distribution manifest |
 
