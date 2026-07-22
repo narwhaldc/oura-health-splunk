@@ -8,6 +8,15 @@ Complete setup guide for the Oura Ring data pipeline and Splunk Dashboard Studio
 > The fetcher sections below are retained for the legacy single-vendor setup (the script name is
 > unchanged; only its repo home moved). New work lives in the **wearables** platform.
 
+> **Index (recommended: `wearables`).** This app's dashboards read their index through the **`widx`
+> macro** (Settings → Advanced Search → Search macros → `widx`), defined as
+> `(index=oura OR index=wearables)` — it bridges the legacy `oura` index (history) and the platform
+> `wearables` index (new data). To use a different index, edit that **one macro line** (e.g.
+> `(index=oura OR index=<yourindex>)`); it must match the ingest target index (see
+> [TA-oura/INSTALL.md](https://github.com/narwhaldc/TA-oura/blob/main/INSTALL.md)) and the wearables
+> app's own `widx`. The dedup-maintenance saved searches use the literal `index=oura` — update those
+> only if you rename the legacy index.
+
 **GA release set:** oura_health **2.0.4** · hypnogram_viz **1.0.1** · charge_ring_viz **1.0.0** (all AppInspect Cloud-clean; install the two viz add-ons before/alongside this app — a full Splunk restart makes their custom-viz JS render).
 
 ---
