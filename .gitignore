@@ -19,7 +19,7 @@ oura_sync.lock
 
 # Old build artifacts — keep only the current package
 oura_health-*.spl
-!oura_health-2_0_6.spl
+!oura_health-2_0_7.spl
 
 # editor swap/temp files (can contain secrets — never commit)
 *.swp
